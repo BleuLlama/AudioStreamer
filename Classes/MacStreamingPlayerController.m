@@ -30,6 +30,30 @@
 - (void)awakeFromNib
 {
 	[downloadSourceField setStringValue:@"http://192.168.1.2/~matt/inside.m4a"];
+    [downloadSourceField setStringValue:@"http://horizons.subsonicradio.com:8000/futureland.mp3"];
+    
+    [metadataRaw setStringValue:@"..." ];
+    [metadataTitle setStringValue:@"..."];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(gotRawMetadata:)
+                                                 name:ASUpdateRawMetadataNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(gotMetadata:)
+                                                 name:ASUpdateMetadataNotification
+                                               object:nil];
+}
+
+- (void)gotRawMetadata:(NSNotification *) notification
+{
+    [metadataRaw setStringValue:streamer.metadataRaw];
+}
+
+- (void)gotMetadata:(NSNotification *) notification
+{
+    [metadataTitle setStringValue:streamer.metadataTitle];
 }
 
 //

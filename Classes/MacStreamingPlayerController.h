@@ -33,6 +33,9 @@
 	IBOutlet NSSlider *progressSlider;
 	AudioStreamer *streamer;
 	NSTimer *progressUpdateTimer;
+    
+    IBOutlet NSTextField *metadataRaw;
+    IBOutlet NSTextField *metadataTitle;
 }
 
 - (IBAction)buttonPressed:(id)sender;

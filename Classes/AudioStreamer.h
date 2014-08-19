@@ -108,6 +108,10 @@ typedef enum
 
 extern NSString * const ASStatusChangedNotification;
 
+extern NSString * const ASUpdateRawMetadataNotification;  // raw data notification
+extern NSString * const ASUpdateMetadataNotification;     // parsed data notification
+
+
 @interface AudioStreamer : NSObject
 {
 	NSURL *url;
@@ -170,6 +174,18 @@ extern NSString * const ASStatusChangedNotification;
 #if TARGET_OS_IPHONE
 	BOOL pausedByInterruption;
 #endif
+    
+    /* metadata support */
+    BOOL foundIcyStart;
+	BOOL foundIcyEnd;
+	BOOL parsedHeaders;
+	unsigned int metaDataInterval;					// how many data bytes between meta data
+	unsigned int metaDataBytesRemaining;	// how many bytes of metadata remain to be read
+	unsigned int dataBytesRead;							// how many bytes of data have been read
+	NSMutableString *metaDataString;			// the metaDataString
+
+    /* volume support */
+    float vol;
 }
 
 @property AudioStreamerErrorCode errorCode;
@@ -180,6 +196,13 @@ extern NSString * const ASStatusChangedNotification;
 @property (readonly) NSDictionary *httpHeaders;
 @property (copy,readwrite) NSString *fileExtension;
 @property (nonatomic) BOOL shouldDisplayAlertOnError; // to control whether the alert is displayed in failWithErrorCode
+
+/* metadata */
+@property (nonatomic, retain) NSURL *url;
+@property (nonatomic, retain) NSMutableString *metadataRaw;
+@property (nonatomic, retain) NSMutableString *metadataTitle;
+@property (nonatomic, retain) NSThread *internalThread;
+
 
 - (id)initWithURL:(NSURL *)aURL;
 - (void)start;
@@ -192,6 +215,9 @@ extern NSString * const ASStatusChangedNotification;
 - (BOOL)isAborted; // return YES if streaming halted due to error (AS_STOPPING + AS_STOPPING_ERROR)
 - (void)seekToTime:(double)newSeekTime;
 - (double)calculatedBitRate;
+
+
+- (void)setVolume:(float)v;
 
 @end
 
