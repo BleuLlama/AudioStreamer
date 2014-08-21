@@ -995,7 +995,7 @@ cleanup:
 		if (!err && !(ioFlags & kAudioFileStreamSeekFlag_OffsetIsEstimated))
 		{
 			seekTime -= ((seekByteOffset - dataOffset) - packetAlignedByteOffset) * 8.0 / calculatedBitRate;
-			seekByteOffset = packetAlignedByteOffset + dataOffset;
+			seekByteOffset = (int) packetAlignedByteOffset + dataOffset;
 		}
 	}
 
@@ -1910,11 +1910,11 @@ cleanup:
 				[self failWithErrorCode:AS_FILE_STREAM_GET_PROPERTY_FAILED];
 				return;
 			}
-			dataOffset = offset;
+			dataOffset = (int)offset;
 			
 			if (audioDataByteCount)
 			{
-				fileLength = dataOffset + audioDataByteCount;
+				fileLength = (int) (dataOffset + audioDataByteCount);
 			}
 		}
 		else if (inPropertyID == kAudioFileStreamProperty_AudioDataByteCount)
@@ -1926,7 +1926,7 @@ cleanup:
 				[self failWithErrorCode:AS_FILE_STREAM_GET_PROPERTY_FAILED];
 				return;
 			}
-			fileLength = dataOffset + audioDataByteCount;
+			fileLength = (int)(dataOffset + audioDataByteCount);
 		}
 		else if (inPropertyID == kAudioFileStreamProperty_DataFormat)
 		{
@@ -2098,7 +2098,9 @@ cleanup:
 				
 				// copy data to the audio queue buffer
 				AudioQueueBufferRef fillBuf = audioQueueBuffer[fillBufferIndex];
-				memcpy((char*)fillBuf->mAudioData + bytesFilled, (const char*)inInputData + packetOffset, packetSize);
+				memcpy((char*)fillBuf->mAudioData + bytesFilled,
+                       (const char*)inInputData + packetOffset,
+                       (int)packetSize);
 
 				// fill out packet description
 				packetDescs[packetsFilled] = inPacketDescriptions[i];
